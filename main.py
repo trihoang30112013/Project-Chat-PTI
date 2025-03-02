@@ -55,3 +55,5 @@ if __name__ == "__main__":
     server = ChatServer()
     app.aboutToQuit.connect(shutdown_server)
     app.exec()
+    
+    #Helo
