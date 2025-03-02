@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "password": "$2b$12$iXj9f5VOVYT2w2E9QWZ34efgZ8nGxpZXlkvaVs9I6l0YH/l8K4UJy",
+        "name": "ADMIN",
+        "image": null
+    },
+    {
+        "id": 2,
+        "username": "Abc@gmail.com",
+        "password": "$2b$12$AQUPTw4kxmBsplkODnqlRuES3VTBzJrXN//w4SqYveIXBMFV0FUWi",
+        "name": "Tr\u00ed",
+        "image": null
+    },
+    {
+        "id": 3,
+        "username": "Tri@gmail.com",
+        "password": "$2b$12$x.zfDVmBgQzKk56OeGR1cu5/aWfZJytEh6pyiZcODHdngHk2Pbc5C",
+        "name": "Tr\u00ed",
+        "image": null
+    }
+]
