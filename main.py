@@ -1,6 +1,6 @@
 import sys,os
 from pathlib import Path
-from PyQt6 import QtCore,uic
+from PyQt6 import QtCore,uic, QtGui
 from PyQt6.QtWidgets import QApplication,QWidget,QDialog
 
 from src import welcome, login, signUp, chat, home, information
@@ -20,12 +20,14 @@ class Signal(QWidget):
     information = QtCore.pyqtSignal(str, QtCore.QPoint, bool, str)
     database = database.Database()
     messageReceive = QtCore.pyqtSignal(str)
+    userListReceived = QtCore.pyqtSignal(list)
     
 class MainMobile(QDialog):
     def __init__(self):
         super().__init__()
         self.ui = uic.loadUi("./UI/Device_select.ui",self)
         self.setWindowTitle("Select your device")
+        self.setWindowIcon(QtGui.QIcon("./images/logo.png"))
         
         self.ui.pushButton.clicked.connect(self.open_main_mobile)
         self.ui.pushButton_2.clicked.connect(self.open_main_PC)
@@ -55,5 +57,3 @@ if __name__ == "__main__":
     server = ChatServer()
     app.aboutToQuit.connect(shutdown_server)
     app.exec()
-    
-    #Helo

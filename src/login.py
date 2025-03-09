@@ -9,15 +9,24 @@ class Login(QMainWindow):
         os.chdir(Path(__file__).parent)
         self.signal = signal
         self.old_pos = None
+        self.device = None
         
+        # Kết nối signal nếu có
         if self.signal != None:
             self.signal.login.connect(self.open_login)
-        else:
-            self.open_login("Mobile")
 
-    def open_login(self,device, position=QtCore.QPoint(100,40), size=False):
+    def open_login(self,device, position=QtCore.QPoint(100,40), maximize=False):
         self.device = device
         self.ui = uic.loadUi(f"../UI/{device}Login.ui",self)
+        self.setWindowTitle("Log In")
+        self.setWindowIcon(QtGui.QIcon("./images/logo.png"))
+        
+        # Thiết lập giao diện
+        self.connect_signals()
+        self.configure_window(maximize, position)
+    
+    def connect_signals(self):
+        """Kết nối các tín hiệu và slot"""
         self.ui.pushButton.clicked.connect(self.check_login)
         self.ui.pushButton_2.clicked.connect(self.changeIcon)
         self.ui.pushButton_2.setCheckable(True)
@@ -25,23 +34,24 @@ class Login(QMainWindow):
         self.ui.pushButton_3.setCheckable(True)
         self.ui.pushButton_4.clicked.connect(self.show_signUp)            
         self.init_lineedit_event()
-        self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint,device!="PC")
-        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground,device!="PC")
+        
+    def init_lineedit_event(self):
+        self.ui.lineEdit.installEventFilter(self)
+        self.ui.lineEdit_2.installEventFilter(self)   
+        
+    def configure_window(self, size, position):
+        """Cấu hình cửa sổ""" 
+        is_mobile = self.device != "PC"
+        self.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint, is_mobile)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, is_mobile)
+        
         if size:
             self.showMaximized()
         else:
             self.move(position)
             self.resize(960,540)
-            self.showNormal()
+            self.showNormal()   
     
-    def show_signUp(self):
-        self.close()
-        self.signal.signUp.emit(self.device, self.pos(), self.isMaximized())
-    
-    def show_home(self, username):
-        self.close()
-        self.signal.home.emit(self.device, self.pos(), self.isMaximized(), username)
-        
     def check_login(self):
         username = self.ui.lineEdit.text()
         password = self.ui.lineEdit_2.text()
@@ -56,10 +66,30 @@ class Login(QMainWindow):
         self.ui.lineEdit_2.clear()
         self.show_home(username)
         
-    def init_lineedit_event(self):
-        self.ui.lineEdit.installEventFilter(self)
-        self.ui.lineEdit_2.installEventFilter(self)
-          
+    def changeIcon(self, checked):
+        if checked:
+            self.ui.pushButton_2.setIcon(QtGui.QIcon("../images/blind_795831.png"))
+            self.ui.lineEdit.setEchoMode(QLineEdit.EchoMode.Normal)
+        else:
+            self.ui.pushButton_2.setIcon(QtGui.QIcon("../images/eye_15632446.png"))
+            self.ui.lineEdit.setEchoMode(QLineEdit.EchoMode.Password)
+        
+    def changeIcon_2(self,checked):
+        if checked:
+            self.ui.pushButton_3.setIcon(QtGui.QIcon("../images/blind_795831.png"))
+            self.ui.lineEdit_2.setEchoMode(QLineEdit.EchoMode.Normal)
+        else:
+            self.ui.pushButton_3.setIcon(QtGui.QIcon("../images/eye_15632446.png"))
+            self.ui.lineEdit_2.setEchoMode(QLineEdit.EchoMode.Password)
+        
+    def show_signUp(self):
+        self.close()
+        self.signal.signUp.emit(self.device, self.pos(), self.isMaximized())
+    
+    def show_home(self, username):
+        self.close()
+        self.signal.home.emit(self.device, self.pos(), self.isMaximized(), username)
+
     def eventFilter(self, obj, event):
         if isinstance(obj,QLineEdit):
             if event.type() == QtCore.QEvent.Type.FocusIn:
@@ -83,42 +113,18 @@ class Login(QMainWindow):
                     
         return super().eventFilter(obj,event)
     
-    def changeIcon(self, checked):
-        if checked:
-            self.ui.pushButton_2.setIcon(QtGui.QIcon("../images/blind_795831.png"))
-            self.ui.lineEdit.setEchoMode(QLineEdit.EchoMode.Normal)
-        else:
-            self.ui.pushButton_2.setIcon(QtGui.QIcon("../images/eye_15632446.png"))
-            self.ui.lineEdit.setEchoMode(QLineEdit.EchoMode.Password)
-        
-    def changeIcon_2(self,checked):
-        if checked:
-            self.ui.pushButton_3.setIcon(QtGui.QIcon("../images/blind_795831.png"))
-            self.ui.lineEdit_2.setEchoMode(QLineEdit.EchoMode.Normal)
-        else:
-            self.ui.pushButton_3.setIcon(QtGui.QIcon("../images/eye_15632446.png"))
-            self.ui.lineEdit_2.setEchoMode(QLineEdit.EchoMode.Password)
-    
-    def close_Application(self):
+    def confirm_exit(self):
         reply = QMessageBox.question(
                 self,'Exit','Are you sure you want to exit?',
                 QMessageBox.StandardButton.Yes|
                 QMessageBox.StandardButton.No,QMessageBox.StandardButton.No
             )
-        if reply == QMessageBox.StandardButton.Yes:
-            self.close()
+        return reply == QMessageBox.StandardButton.Yes
     
-    def changeEvent(self, event):
-        if event.type() == QtCore.QEvent.Type.WindowStateChange:
-            if self.windowState() == QtCore.Qt.WindowState.WindowNoState:
-                self.move(self.x(), self.y())
-                self.resize(960,540)
-                
-        super().changeEvent(event)
-                
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key.Key_Escape:
-            self.close_Application()
+            if self.confirm_exit():
+                self.close()
         if event.key() == QtCore.Qt.Key.Key_Return or event.key() == QtCore.Qt.Key.Key_Enter:
             self.check_login()
             
@@ -126,16 +132,23 @@ class Login(QMainWindow):
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self.old_pos = event.globalPosition().toPoint()
     
-    def mouseMoveEvent(self,event):
+    def mouseMoveEvent(self,event): 
         if self.old_pos is not None:
-            delta = event.globalPosition().toPoint()-self.old_pos
-            self.move(self.pos()+delta)
+            delta = event.globalPosition().toPoint() - self.old_pos
+            self.move(self.pos() + delta)
             self.old_pos = event.globalPosition().toPoint()
             
     def mouseReleaseEvent(self, event):
-       if event.button() == QtCore.Qt.MouseButton.LeftButton:
-           self.old_pos = None
-           
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            self.old_pos = None
+            
+    def changeEvent(self, event):
+        if event.type() == QtCore.QEvent.Type.WindowStateChange:
+            if self.windowState() == QtCore.Qt.WindowState.WindowNoState:
+                self.resize(960,540)
+                
+        super().changeEvent(event)
+    
     def show_message_box(self, title="Message Box", content="This is a message box", icon=QMessageBox.Icon.Information): 
         msg = QMessageBox() 
         msg.setIcon(icon) 

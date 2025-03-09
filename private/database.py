@@ -52,7 +52,7 @@ class Account:
         
     def __str__(self):
         return f"Username: {self.username}, Password: {self.password}"
-        
+    
 class Database():
     def __init__(self):
         self.file_path = Path(__file__).parent / "info.json"

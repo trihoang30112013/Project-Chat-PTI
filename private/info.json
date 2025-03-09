@@ -3,21 +3,28 @@
         "id": 1,
         "username": "admin",
         "password": "$2b$12$iXj9f5VOVYT2w2E9QWZ34efgZ8nGxpZXlkvaVs9I6l0YH/l8K4UJy",
-        "name": "ADMIN",
+        "name": "Admin",
         "image": null
     },
     {
         "id": 2,
         "username": "Abc@gmail.com",
         "password": "$2b$12$AQUPTw4kxmBsplkODnqlRuES3VTBzJrXN//w4SqYveIXBMFV0FUWi",
-        "name": "Tr\u00ed",
+        "name": "Abc",
         "image": null
     },
     {
         "id": 3,
-        "username": "Tri@gmail.com",
-        "password": "$2b$12$x.zfDVmBgQzKk56OeGR1cu5/aWfZJytEh6pyiZcODHdngHk2Pbc5C",
-        "name": "Tr\u00ed",
+        "username": "anhtk20012@gmail.com",
+        "password": "$2b$12$hCj5WSsHsfSYSUUVElXWjOGXF5uiGJ4q7S7EG8uduc40ue.29iy.m",
+        "name": "\u00c1nh",
+        "image": null
+    },
+    {
+        "id": 4,
+        "username": "Xyz@gmail.com",
+        "password": "$2b$12$9JyrHMG3iSM/11op/TFA6OjDxFC4hB0/BhhAiDZzLO.MmNykPLHMC",
+        "name": "Xyz",
         "image": null
     }
 ]
